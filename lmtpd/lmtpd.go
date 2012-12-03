@@ -1,6 +1,6 @@
-// Package smtpd implements an SMTP server. Hooks are provided to customize
+// Package lmtpd implements an LMTP server. Hooks are provided to customize
 // its behavior.
-package smtpd
+package lmtpd
 
 // TODO:
 //  -- send 421 to connected clients on graceful server shutdown (s3.8)
@@ -120,7 +120,7 @@ func (srv *Server) Serve(ln net.Listener) error {
 		rw, e := ln.Accept()
 		if e != nil {
 			if ne, ok := e.(net.Error); ok && ne.Temporary() {
-				log.Printf("smtpd: Accept error: %v", e)
+				log.Printf("lmtpd: Accept error: %v", e)
 				continue
 			}
 			return e
@@ -192,7 +192,7 @@ func (s *session) serve() {
 			return
 		}
 	}
-	s.sendf("220 %s ESMTP gosmtpd\r\n", s.srv.hostname())
+	s.sendf("220 %s ESMTP golmtpd\r\n", s.srv.hostname())
 	for {
 		if s.srv.ReadTimeout != 0 {
 			s.rwc.SetReadDeadline(time.Now().Add(s.srv.ReadTimeout))
@@ -271,7 +271,7 @@ func (s *session) handleMailFrom(email string) {
 	log.Printf("mail from: %q", email)
 	cb := s.srv.OnNewMail
 	if cb == nil {
-		log.Printf("smtp: Server.OnNewMail is nil; rejecting MAIL FROM")
+		log.Printf("lmtp: Server.OnNewMail is nil; rejecting MAIL FROM")
 		s.sendf("451 Server.OnNewMail not configured\r\n")
 		return
 	}
