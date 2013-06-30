@@ -209,7 +209,7 @@ func (s *session) serve() {
 		}
 
 		switch line.Verb() {
-		case "HELO", "EHLO":
+		case "LHLO":
 			s.handleHello(line.Verb(), line.Arg())
 		case "QUIT":
 			s.sendlinef("221 2.0.0 Bye")
